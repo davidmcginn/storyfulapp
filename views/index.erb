@@ -1,8 +1,66 @@
-<input type="text" name="search-term" id="search-term" placeholder="e.g. davemcginn_ie">
-<input type="button" value="Search" name="submit-button" id="submit-button"></input>
+<html>
+<head>
+  <title></title>
+</head>
+<body>
 
-<% @embeddable_tweets.each do |tweet| %>
+  <input type="text" name="search-term" id="search-term" placeholder="e.g. davemcginn_ie">
+  <input type="button" value="Search" name="submit-button" id="submit-button"></input>
 
-  <%= tweet %>
+  <div id="loading-indicator" style="display:none;">
+    <img src="http://i.stack.imgur.com/FhHRx.gif">
+    <p>Getting tweets – sorry for the slowness!</p>
+    <p>Make some coffee while you wait :-/</p>
+  </div>
 
-<% end %>
+  <div id="tweets-box">
+
+  <div>
+
+</body>
+</html>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js" ></script>
+<script>
+$(document).ready(function() {
+
+  $('#submit-button').click(function() {
+
+    var input = $('#search-term');
+    var search_term = input.val();
+    input.val('');
+
+    var tweets = getTweets(search_term); //console.log(search_term);
+  });
+
+  function getTweets(search_term) {
+    var search_url = "http://localhost:9292/get_tweets?user=" + search_term;
+
+    $.ajax({
+      url: search_url,
+      success: function(data) {
+        displayTweetsOnPage(data);
+      }
+    });
+  }
+
+  function displayTweetsOnPage(html) {
+    var box = $('#tweets-box');
+    box.empty();
+    box.html(html);
+  }
+
+});
+
+$(document).on({
+  ajaxStart: function() { 
+    console.log("Loading tweets...");    
+    $('#loading-indicator').show();
+  },
+  ajaxStop: function() { 
+    console.log("Got tweets!"); 
+    $('#loading-indicator').hide();
+  }
+});
+
+</script>
