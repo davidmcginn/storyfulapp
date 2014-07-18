@@ -1,0 +1,8 @@
+<input type="text" name="search-term" id="search-term" placeholder="e.g. davemcginn_ie">
+<input type="button" value="Search" name="submit-button" id="submit-button"></input>
+
+<% @embeddable_tweets.each do |tweet| %>
+
+  <%= tweet %>
+
+<% end %>

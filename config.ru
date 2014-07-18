@@ -1,0 +1,3 @@
+require './storyful'
+
+run Storyful
