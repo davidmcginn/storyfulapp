@@ -4,30 +4,13 @@ require 'json'
 
 class Storyful < Sinatra::Application
 
-  before '/*' do
-  end
-
-  after '/*' do
-  end
-
   get '/' do
-
-    # tweets = client.user_timeline("davemcginn_ie")
-
-    # @embeddable_tweets = []
-
-    # tweets.each do |tweet|
-    #   @embeddable_tweets << client.oembed(tweet).html
-    # end
-
     erb :index
   end
 
   get '/get_tweets' do
 
     @embeddable_tweets = get_tweets(params["user"])
-
-# p @embeddable_tweets
 
     content_type :json
     @embeddable_tweets.to_json

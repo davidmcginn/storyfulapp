@@ -30,7 +30,7 @@ $(document).ready(function() {
     var search_term = input.val();
     input.val('');
 
-    var tweets = getTweets(search_term); //console.log(search_term);
+    var tweets = getTweets(search_term); 
   });
 
   function getTweets(search_term) {
@@ -54,7 +54,7 @@ $(document).ready(function() {
 
 $(document).on({
   ajaxStart: function() { 
-    console.log("Loading tweets...");    
+    console.log("Loading tweets...");
     $('#loading-indicator').show();
   },
   ajaxStop: function() { 
