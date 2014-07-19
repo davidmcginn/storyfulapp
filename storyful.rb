@@ -1,10 +1,19 @@
+#encoding: utf-8
+require 'cgi'
+require 'erb'
+
 require 'sinatra'
 require 'twitter'
 require 'json'
+require 'yaml'
 
 class Storyful < Sinatra::Application
 
   get '/' do
+    config_file = YAML.load_file('./config/accounts.yml')
+    accounts = config_file["accounts"]
+    @accounts_with_tweets = accounts.map {|acc| {acc => get_tweets(acc)} }
+
     erb :index
   end
 

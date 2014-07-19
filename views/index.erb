@@ -4,18 +4,32 @@
 </head>
 <body>
 
-  <input type="text" name="search-term" id="search-term" placeholder="e.g. davemcginn_ie">
-  <input type="button" value="Search" name="submit-button" id="submit-button"></input>
+  <div id="tweetdeck">
 
-  <div id="loading-indicator" style="display:none;">
-    <img src="http://i.stack.imgur.com/FhHRx.gif">
-    <p>Getting tweets – sorry for the slowness!</p>
-    <p>Make some coffee while you wait :-/</p>
+    <% @accounts_with_tweets.each do |account| %>
+      <% username = account.keys.first %>
+      <% tweets = account[username] %>
+
+      <div class="tweetdeck-column" style="width:240px; display: block; float: left;">
+        <input type="text" name="search-term" class="search-term" placeholder="e.g. davemcginn_ie" value="<%= username %>">
+        <input type="button" value="Search" name="submit-button" class="submit-button">
+
+        <div class="loading-indicator" style="display:none;">
+          <img src="http://i.stack.imgur.com/FhHRx.gif">
+          <p>Getting tweets – sorry for the slowness!</p>
+          <p>Make some coffee while you wait :-/</p>
+        </div>
+
+        <div class="tweets">
+          <% tweets.each do |tweet| %>
+            <%= tweet %>
+          <% end %>
+        </div>
+
+      </div>
+    <% end %>
+
   </div>
-
-  <div id="tweets-box">
-
-  <div>
 
 </body>
 </html>
@@ -24,30 +38,31 @@
 <script>
 $(document).ready(function() {
 
-  $('#submit-button').click(function() {
+  $('.submit-button').click(function() {
 
-    var input = $('#search-term');
+    var button = $(this);
+
+    var loadingIndicator = button.next('.loading-indicator');
+    var input = button.prev('.search-term');
+    var tweets_box = button.next().next();
+
     var search_term = input.val();
     input.val('');
+    tweets_box.empty();
+    loadingIndicator.show();
 
-    var tweets = getTweets(search_term); 
+    var tweets = getTweets(search_term, tweets_box);
   });
 
-  function getTweets(search_term) {
-    var search_url = "http://localhost:9292/get_tweets?user=" + search_term;
+  function getTweets(search_term, tweets_box) {
+    var search_url = "http://localhost:9393/get_tweets?user=" + search_term;
 
     $.ajax({
       url: search_url,
       success: function(data) {
-        displayTweetsOnPage(data);
+        tweets_box.html(data);
       }
     });
-  }
-
-  function displayTweetsOnPage(html) {
-    var box = $('#tweets-box');
-    box.empty();
-    box.html(html);
   }
 
 });
@@ -55,11 +70,10 @@ $(document).ready(function() {
 $(document).on({
   ajaxStart: function() { 
     console.log("Loading tweets...");
-    $('#loading-indicator').show();
   },
   ajaxStop: function() { 
     console.log("Got tweets!"); 
-    $('#loading-indicator').hide();
+    $('.loading-indicator').hide();
   }
 });
 
