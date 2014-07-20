@@ -22,6 +22,10 @@ class Storyful < Sinatra::Application
     @embeddable_tweets.to_json
   end
 
+  get '/test' do
+    'oh hai'
+  end
+
   private
   def request_tweets(user)
     get_new_client
