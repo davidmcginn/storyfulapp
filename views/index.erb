@@ -10,7 +10,7 @@
       <% username = account.keys.first %>
       <% tweets = account[username] %>
 
-      <div class="tweetdeck-column" style="width:240px; display: block; float: left;">
+      <div class="tweetdeck-column" style="width:240px; display: block; float: left; padding: 0 10px;">
         <input type="text" name="search-term" class="search-term" placeholder="e.g. davemcginn_ie" value="<%= username %>">
         <input type="button" value="Search" name="submit-button" class="submit-button">
 
@@ -35,6 +35,8 @@
 </html>
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js" ></script>
+
+
 <script>
 $(document).ready(function() {
 
@@ -42,25 +44,39 @@ $(document).ready(function() {
 
     var button = $(this);
 
-    var loadingIndicator = button.next('.loading-indicator');
     var input = button.prev('.search-term');
     var tweets_box = button.next().next();
 
     var search_term = input.val();
     input.val('');
     tweets_box.empty();
-    loadingIndicator.show();
 
     var tweets = getTweets(search_term, tweets_box);
   });
 
   function getTweets(search_term, tweets_box) {
     var search_url = "http://localhost:9393/get_tweets?user=" + search_term;
+    var loadingIndicator = tweets_box.prev('.loading-indicator');
 
     $.ajax({
       url: search_url,
+      beforeSend: function() { 
+        loadingIndicator.show();
+      },
+      complete: function() {
+        loadingIndicator.hide();
+      },
       success: function(data) {
+        tweets_box.hide();
         tweets_box.html(data);
+        twttr.widgets.load();
+        setTimeout(function () { // Delay so that the embedded widgets aren't displayed until they're
+          tweets_box.show();     // fully loaded/styled.
+        }, 800);
+      },
+      error: function() {
+        tweets_box.html("<p>Could not fetch tweets :(</p><p>We have probably exceeded our quota with both API keys. Check again in 15 mins.</p>");
+        tweets_box.show();
       }
     });
   }
@@ -68,13 +84,13 @@ $(document).ready(function() {
 });
 
 $(document).on({
-  ajaxStart: function() { 
+  ajaxStart: function() {
     console.log("Loading tweets...");
   },
-  ajaxStop: function() { 
-    console.log("Got tweets!"); 
-    $('.loading-indicator').hide();
+  ajaxStop: function() {
+    console.log("Got tweets!");
   }
 });
 
 </script>
+<script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
