@@ -47,6 +47,7 @@ class Storyful < Sinatra::Application
     return embeddable_tweets
   end
 
+  # Uses 'Storyful18July' API key firstly. If called again (in a rescue), it changes to Storyful18July2 API key
   def get_new_client
     # Use second API key if first is already set (i.e. it needs to be changed)
     if @client 
