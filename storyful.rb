@@ -1,7 +1,4 @@
 #encoding: utf-8
-require 'cgi'
-require 'erb'
-
 require 'sinatra'
 require 'twitter'
 require 'json'
